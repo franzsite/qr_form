@@ -2,52 +2,50 @@ html
 <!DOCTYPE html>
 <html lang="it">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Reindirizzamento...</title>
+<title>Diagnostica QR</title>
 
 <style>
-
 body{
     font-family:Arial,Helvetica,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    margin:0;
-    background:#f5f5f5;
+    margin:40px;
+    background:#f4f4f4;
 }
 
 .card{
     background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 0 20px rgba(0,0,0,.15);
-    text-align:center;
-    max-width:500px;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.15);
 }
 
-h2{
-    color:#1a73e8;
+pre{
+    background:#eee;
+    padding:15px;
+    overflow:auto;
+    border-radius:5px;
 }
-
+.ok{
+    color:green;
+    font-weight:bold;
+}
+.no{
+    color:red;
+    font-weight:bold;
+}
 </style>
-
 </head>
 
 <body>
 
 <div class="card">
 
-<h2 id="titolo">
-Controllo della data...
-</h2>
+<h2>Diagnostica QR</h2>
 
-<p id="testo">
-Attendere...
-</p>
+<div id="risultato"></div>
+
+<pre id="log"></pre>
 
 </div>
 
@@ -82,34 +80,63 @@ end:"2026-09-05",
 url:"https://docs.google.com/forms/d/e/1FAIpQLSe6JZA_OjGmS8NknsQ5B4UMm1QYIBtq9nfEphPHA7pKyOK1WQ/viewform?usp=publish-editor",
 msg:"Apertura del modulo 4..."
 }
-  
+
 ];
+
+function parseData(s){
+
+const p=s.split("-");
+
+return new Date(
+Number(p[0]),
+Number(p[1])-1,
+Number(p[2]),
+0,0,0,0
+);
+
+}
 
 const oggi=new Date();
 
 oggi.setHours(0,0,0,0);
 
+let testo="";
+
+testo+="Oggi: "+oggi.toString()+"\n\n";
+
 let trovato=false;
 
 for(const f of form){
 
-let inizio=new Date(f.start);
+const inizio=parseData(f.start);
 
-let fine=new Date(f.end);
+const fine=parseData(f.end);
 
 fine.setHours(23,59,59,999);
 
-if(oggi>=inizio && oggi<=fine){
+const valido=oggi>=inizio && oggi<=fine;
 
-document.getElementById("titolo").innerHTML=f.msg;
+testo+="----------------------\n";
+testo+="Intervallo\n";
+testo+="Dal : "+inizio.toString()+"\n";
+testo+="Al  : "+fine.toString()+"\n";
+testo+="URL : "+f.url+"\n";
+testo+="Esito: "+valido+"\n\n";
 
-setTimeout(function(){
-
-window.location.href=f.url;
-
-},1000);
+if(valido){
 
 trovato=true;
+
+document.getElementById("risultato").innerHTML=
+'<p class="ok">INTERVALLO TROVATO</p>'+
+'<p>'+f.msg+'</p>'+
+'<p>'+f.url+'</p>';
+
+/* togli il commento per il redirect */
+
+setTimeout(()=>{
+    location.href=f.url;
+},1000);
 
 break;
 
@@ -119,14 +146,15 @@ break;
 
 if(!trovato){
 
-document.getElementById("titolo").innerHTML="Modulo non disponibile";
-
-document.getElementById("testo").innerHTML=
-"Nessun Google Form è attivo nella data odierna.";
+document.getElementById("risultato").innerHTML=
+'<p class="no">NESSUN INTERVALLO TROVATO</p>';
 
 }
+
+document.getElementById("log").textContent=testo;
 
 </script>
 
 </body>
 </html>
+
