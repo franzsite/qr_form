@@ -1,0 +1,132 @@
+html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Reindirizzamento...</title>
+
+<style>
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+    background:#f5f5f5;
+}
+
+.card{
+    background:white;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 0 20px rgba(0,0,0,.15);
+    text-align:center;
+    max-width:500px;
+}
+
+h2{
+    color:#1a73e8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="titolo">
+Controllo della data...
+</h2>
+
+<p id="testo">
+Attendere...
+</p>
+
+</div>
+
+<script>
+
+const form = [
+
+{
+start:"2026-08-01",
+end:"2026-08-05",
+url:"https://docs.google.com/forms/d/e/1FAIpQLSdZH_Q-Ft5PhVgy95fDIDs2e0YxlO3np4BIZ5N6p3ZjIBNeRA/viewform?usp=publish-editor",
+msg:"Apertura del modulo 1..."
+},
+
+{
+start:"2026-08-11",
+end:"2026-08-15",
+url:"https://docs.google.com/forms/d/e/1FAIpQLScy4cjhEY0q-Bzs0599xkjnJ5vKiw3HoAb4SxQf3m9y9K7j4g/viewform?usp=publish-editor",
+msg:"Apertura del modulo 2..."
+},
+
+{
+start:"2026-08-21",
+end:"2026-08-25",
+url:"https://docs.google.com/forms/d/e/1FAIpQLSeIndw6mSUYZFVwjtKsXfuEHutSiJiqUHJ4FVZMaOQqpcbYdQ/viewform?usp=publish-editor",
+msg:"Apertura del modulo 3..."
+},
+
+{
+start:"2026-09-01",
+end:"2026-09-05",
+url:"https://docs.google.com/forms/d/e/1FAIpQLSe6JZA_OjGmS8NknsQ5B4UMm1QYIBtq9nfEphPHA7pKyOK1WQ/viewform?usp=publish-editor",
+msg:"Apertura del modulo 3..."
+}
+  
+];
+
+const oggi=new Date();
+
+oggi.setHours(0,0,0,0);
+
+let trovato=false;
+
+for(const f of form){
+
+let inizio=new Date(f.start);
+
+let fine=new Date(f.end);
+
+fine.setHours(23,59,59,999);
+
+if(oggi>=inizio && oggi<=fine){
+
+document.getElementById("titolo").innerHTML=f.msg;
+
+setTimeout(function(){
+
+window.location.href=f.url;
+
+},1000);
+
+trovato=true;
+
+break;
+
+}
+
+}
+
+if(!trovato){
+
+document.getElementById("titolo").innerHTML="Modulo non disponibile";
+
+document.getElementById("testo").innerHTML=
+"Nessun Google Form è attivo nella data odierna.";
+
+}
+
+</script>
+
+</body>
+</html>
